@@ -5,30 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OMICRON Pick-up Service | Professional Portal</title>
     <style>
-        :root { --primary: #0056b3; --bg: #f4f7f9; --card: #ffffff; --success: #28a745; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg); padding: 20px; color: #333; line-height: 1.5; }
-        .container { max-width: 850px; margin: 0 auto; background: var(--card); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; position: relative; min-height: 400px; }
-        .header { background: var(--primary); color: white; padding: 25px; text-align: center; }
-        .header h2 { margin: 0; font-size: 1.8em; letter-spacing: 1px; font-weight: 700; }
-        .form-body { padding: 30px; }
-        .section { margin-bottom: 35px; border-left: 4px solid var(--primary); padding-left: 20px; }
-        .section-title { font-weight: 700; font-size: 1.1em; margin-bottom: 20px; color: var(--primary); text-transform: uppercase; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        :root { 
+            --primary: #0056b3; 
+            --bg: #f4f7f9; 
+            --card: #ffffff; 
+            --success: #28a745; 
+            --border: #ddd;
+        }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg); 
+            padding: 40px 20px; 
+            color: #333; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card); 
+            border-radius: 8px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            overflow: hidden; 
+        }
+        .header { 
+            background: var(--primary); 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .header h2 { margin: 0; font-size: 2em; font-weight: 600; }
+        .form-body { padding: 40px; }
+        
+        .section { margin-bottom: 40px; border-left: 5px solid var(--primary); padding-left: 25px; }
+        .section-title { 
+            font-weight: 800; 
+            font-size: 1.2em; 
+            margin-bottom: 25px; 
+            color: var(--primary); 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .full { grid-column: span 2; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9em; color: #444; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em; box-sizing: border-box; font-family: inherit; }
         
-        .count-selector { background: #e7f3ff; padding: 25px; border-radius: 8px; margin-bottom: 25px; border: 2px solid var(--primary); }
-        .count-input { font-size: 1.2em; font-weight: bold; color: var(--primary); border: 2px solid var(--primary); width: 100px !important; text-align: center; }
-        .package-card { background: #f8f9fa; border: 1px solid #e1e4e8; padding: 20px; border-radius: 8px; margin-bottom: 15px; }
-        .dimensions { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
-        
-        button#submitBtn { background: var(--primary); color: white; border: none; padding: 20px; font-size: 1.1em; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 700; margin-top: 20px; transition: 0.3s; }
-        button#submitBtn:hover { background: #003d82; }
+        label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 0.95em; color: #2c3e50; }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            font-size: 1em; 
+            box-sizing: border-box; 
+            background-color: #fcfcfc;
+        }
+        input:focus { border-color: var(--primary); outline: none; background-color: #fff; }
 
-        #success-overlay { display: none; padding: 60px 30px; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .success-icon { font-size: 60px; color: var(--success); margin-bottom: 20px; }
-        .btn-reload { display: inline-block; margin-top: 30px; padding: 15px 30px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; }
+        .count-selector { 
+            background: #f0f7ff; 
+            padding: 30px; 
+            border-radius: 8px; 
+            margin-bottom: 30px; 
+            border: 1px solid #cce3ff; 
+        }
+        .count-input { 
+            font-size: 1.3em; 
+            font-weight: bold; 
+            color: var(--primary); 
+            width: 120px !important; 
+            text-align: center; 
+            border: 2px solid var(--primary);
+        }
+        
+        .package-card { 
+            background: #ffffff; 
+            border: 1px solid #e0e0e0; 
+            padding: 25px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+        }
+        .dimensions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        
+        button#submitBtn { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 22px; 
+            font-size: 1.2em; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-weight: 700; 
+            margin-top: 20px; 
+            transition: background 0.2s; 
+        }
+        button#submitBtn:hover { background: #004494; }
+
+        #success-overlay { 
+            display: none; 
+            padding: 80px 40px; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+        }
+        .success-icon { font-size: 80px; color: var(--success); margin-bottom: 25px; }
+        .btn-reload { 
+            display: inline-block; 
+            margin-top: 35px; 
+            padding: 18px 35px; 
+            background: var(--primary); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -36,8 +127,11 @@
 <div class="container">
     <div id="success-overlay">
         <div class="success-icon">✓</div>
-        <h1>E-Mail Vorlage erstellt!</h1>
-        <p>Ihr E-Mail-Programm sollte sich soeben geöffnet haben. Bitte prüfen Sie den Entwurf und klicken Sie auf "Senden", um den Auftrag abzuschließen.</p>
+        <h1 style="color: var(--primary);">E-Mail Vorlage erstellt!</h1>
+        <p style="font-size: 1.1em; max-width: 600px;">
+            Ihr E-Mail-Programm sollte sich soeben mit dem fertigen Entwurf geöffnet haben.<br><br>
+            <strong>Wichtig:</strong> Bitte klicken Sie in Ihrem Mail-Programm noch auf "Senden".
+        </p>
         <button onclick="location.reload()" class="btn-reload">Neuer Auftrag</button>
     </div>
 
@@ -48,50 +142,50 @@
 
         <form class="form-body" id="pickupForm">
             <div class="section">
-                <div class="section-title">1. Absender & Kontakt</div>
+                <div class="section-title">1. Contact</div>
                 <div class="grid">
-                    <div class="full"><label>Firma *</label><input type="text" name="Absender_Firma" required></div>
-                    <div><label>Kontaktperson *</label><input type="text" name="Kontaktperson" required></div>
-                    <div><label>Telefon *</label><input type="tel" name="Telefon" required></div>
-                    <div class="full"><label>E-Mail *</label><input type="email" name="Absender_Email" required></div>
-                    <div><label>Ort *</label><input type="text" name="Ort" required></div>
-                    <div><label>PLZ *</label><input type="text" name="PLZ" required></div>
-                    <div class="full"><label>Straße, Hausnr. *</label><input type="text" name="Strasse_Hnr" required></div>
+                    <div class="full"><label>Company *</label><input type="text" name="Absender_Firma" required></div>
+                    <div><label>Contact Person *</label><input type="text" name="Kontaktperson" required></div>
+                    <div><label>Phone number *</label><input type="tel" name="Telefon" required></div>
+                    <div class="full"><label>Email *</label><input type="email" name="Absender_Email" required></div>
+                    <div><label>City *</label><input type="text" name="Ort" required></div>
+                    <div><label>Zip Code *</label><input type="text" name="PLZ" required></div>
+                    <div class="full"><label>Street, House No. *</label><input type="text" name="Strasse_Hnr" required></div>
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">2. Geräte-Infos</div>
-                <div style="margin-bottom: 20px;">
-                    <label>Modelle & Zubehör *</label>
-                    <textarea name="Geraete_Liste" rows="2" placeholder="z.B. CMC 356" required></textarea>
+                <div class="section-title">2. Device Info</div>
+                <div style="margin-bottom: 25px;">
+                    <label>Products & Accessories *</label>
+                    <textarea name="Geraete_Liste" rows="3" placeholder="e.g. CMC 500 - Testing Cable" required></textarea>
                 </div>
                 <div class="grid">
-                    <div><label>Seriennummer(n) *</label><input type="text" name="Seriennummern" required></div>
-                    <div><label>Servicegrund *</label><input type="text" name="Service_Grund" placeholder="z.B. Kalibrierung" required></div>
+                    <div><label>Serial Number(s) *</label><input type="text" name="Seriennummern" required></div>
+                    <div><label>Reason for Service *</label><input type="text" name="Service_Grund" placeholder="e.g. Repair, Calibration" required></div>
                 </div>
             </div>
 
             <div class="count-selector">
-                <label>Wie viele Packstücke insgesamt?</label>
+                <label>How many packages in total?</label>
                 <input type="number" id="packageCount" name="Anzahl_Packstuecke" value="1" min="1" max="15" class="count-input">
             </div>
 
             <div class="section">
-                <div class="section-title">3. Packstücke</div>
+                <div class="section-title">3. Package Details</div>
                 <div id="packageContainer"></div>
             </div>
 
             <div class="section">
-                <div class="section-title">4. Terminierung</div>
+                <div class="section-title">4. Scheduling</div>
                 <div class="grid">
-                    <div><label>Wunschdatum *</label><input type="date" id="pickupDate" name="Abholdatum" required></div>
-                    <div><label>Zeitfenster</label><input type="text" name="Zeitfenster" placeholder="z.B. 08:00 - 12:00"></div>
-                    <div class="full"><label>Zusatzinfos (optional)</label><textarea name="Zusatzinfo" rows="2"></textarea></div>
+                    <div><label>Requested Date for pick-up *</label><input type="date" id="pickupDate" name="Abholdatum" required></div>
+                    <div><label>Time Window for pick-up</label><input type="text" name="Zeitfenster" placeholder="e.g. 08:00 - 15:00"></div>
+                    <div class="full"><label>Logistics Info (optional)</label><textarea name="Zusatzinfo" rows="2" placeholder="e.g. Loading dock available"></textarea></div>
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn">E-Mail Vorlage generieren</button>
+            <button type="submit" id="submitBtn">Send binding pick-up order</button>
         </form>
     </div>
 </div>
@@ -102,6 +196,7 @@
     const pickupForm = document.getElementById('pickupForm');
     const dateInput = document.getElementById('pickupDate');
 
+    // Erstellt die Pakete-Eingabemaske
     function renderPackages() {
         let count = parseInt(selector.value) || 1;
         container.innerHTML = '';
@@ -109,20 +204,20 @@
             const card = document.createElement('div');
             card.className = 'package-card';
             card.innerHTML = `
-                <div style="font-weight:bold; margin-bottom:10px; color:#0056b3;">Packstück #${i}</div>
-                <div style="margin-bottom:10px;">
-                    <label>Typ *</label>
+                <div style="font-weight:bold; margin-bottom:15px; color:#0056b3; border-bottom: 1px solid #eee; padding-bottom:10px;">Package #${i}</div>
+                <div style="margin-bottom:20px;">
+                    <label>Type of Package *</label>
                     <select name="P${i}_Typ">
-                        <option value="Paket">Paket / Box</option>
-                        <option value="Original Koffer">Original Omicron Koffer</option>
-                        <option value="Euro Palette">Euro Palette</option>
+                        <option value="Parcel / Box">Parcel / Box</option>
+                        <option value="Original Omicron Case">Original Omicron Case</option>
+                        <option value="Euro Pallet">Euro Pallet</option>
                     </select>
                 </div>
                 <div class="dimensions">
                     <div><label>L (cm)</label><input type="number" name="P${i}_L" required></div>
-                    <div><label>B (cm)</label><input type="number" name="P${i}_B" required></div>
+                    <div><label>W (cm)</label><input type="number" name="P${i}_B" required></div>
                     <div><label>H (cm)</label><input type="number" name="P${i}_H" required></div>
-                    <div><label>kg</label><input type="number" name="P${i}_Gewicht" step="0.1" required></div>
+                    <div><label>KG</label><input type="number" name="P${i}_Gewicht" step="0.1" required></div>
                 </div>`;
             container.appendChild(card);
         }
@@ -131,6 +226,7 @@
     selector.addEventListener('input', renderPackages);
     window.addEventListener('DOMContentLoaded', () => {
         renderPackages();
+        // Setzt das Mindestdatum für den Picker auf heute
         dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
     });
 
@@ -138,11 +234,10 @@
         e.preventDefault();
         const formData = new FormData(pickupForm);
         
-        // Empfänger Adresse (hier anpassen)
         const recipient = "service@omicronenergy.com";
-        const subject = `Abholauftrag: ${formData.get('Absender_Firma')} - ${formData.get('Ort')}`;
+        const subject = `Pick-up Order: ${formData.get('Absender_Firma')} - ${formData.get('Ort')}`;
         
-        // E-Mail Text zusammenbauen (Formatierung wie im Bild)
+        // E-Mail Text Aufbau
         let body = `1. ABSENDER & KONTAKT\r\n`;
         body += `Firma: ${formData.get('Absender_Firma')}\r\n`;
         body += `Kontaktperson: ${formData.get('Kontaktperson')}\r\n`;
@@ -167,15 +262,14 @@
         body += `Zeitfenster: ${formData.get('Zeitfenster') || 'Keine Angabe'}\r\n`;
         body += `Zusatzinfos: ${formData.get('Zusatzinfo') || 'keine'}\r\n`;
 
-        // Mailto Link erstellen
+        // Mailto generieren
         const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         
-        // Öffnet das Mail-Programm
+        // Öffnen und Ansicht umschalten
         window.location.href = mailtoUrl;
-
-        // Ansicht wechseln
         document.getElementById('main-content').style.display = 'none';
         document.getElementById('success-overlay').style.display = 'flex';
+        window.scrollTo(0,0);
     });
 </script>
 
