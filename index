@@ -1,0 +1,101 @@
+const container = document.getElementById('packageContainer');
+const selector = document.getElementById('packageCount');
+const pickupForm = document.getElementById('pickupForm');
+const dateInput = document.getElementById('pickupDate');
+
+function setMinDate() {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+}
+
+function updateDimensions(selectElement, index) {
+    const card = selectElement.closest('.package-card');
+    const lInput = card.querySelector(`input[name="P${index}_L"]`);
+    const bInput = card.querySelector(`input[name="P${index}_B"]`);
+    const hInput = card.querySelector(`input[name="P${index}_H"]`);
+
+    switch(selectElement.value) {
+        case "Euro Palette (120x80)":
+            lInput.value = 120; bInput.value = 80; hInput.value = ""; break;
+        case "Kleine Palette (60x80)":
+            lInput.value = 80; bInput.value = 60; hInput.value = ""; break;
+        default:
+            lInput.value = ""; bInput.value = ""; hInput.value = "";
+    }
+}
+
+function renderPackages() {
+    let count = parseInt(selector.value) || 1;
+    container.innerHTML = '';
+    for (let i = 1; i <= count; i++) {
+        const card = document.createElement('div');
+        card.className = 'package-card';
+        card.innerHTML = `
+            <div style="font-weight:bold; margin-bottom:10px; color:#0056b3;">Package #${i}</div>
+            <div style="margin-bottom:10px;">
+                <label>Type of Package *</label>
+                <select name="P${i}_Typ" onchange="updateDimensions(this, ${i})" required>
+                    <option value="Paket">Parcel / Box</option>
+                    <option value="Original Omicron Koffer">Original Omicron Case</option>
+                    <option value="Euro Palette (120x80)">Euro Pallet (120x80)</option>
+                    <option value="Kleine Palette (60x80)">Small Pallet (60x80)</option>
+                </select>
+            </div>
+            <div class="dimensions">
+                <div><label>L (cm)</label><input type="number" name="P${i}_L" required min="1"></div>
+                <div><label>W (cm)</label><input type="number" name="P${i}_B" required min="1"></div>
+                <div><label>H (cm)</label><input type="number" name="P${i}_H" required min="1"></div>
+                <div><label>KG</label><input type="number" name="P${i}_Gewicht" step="0.1" required min="0.1"></div>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+}
+
+selector.addEventListener('input', renderPackages);
+window.addEventListener('DOMContentLoaded', () => {
+    renderPackages();
+    setMinDate();
+});
+
+// NEUE LOGIK: Mailto statt Google Script
+pickupForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(pickupForm);
+    const recipient = "service@omicronenergy.com"; // Hier Ziel-Email eintragen
+    const subject = `Abholauftrag: ${formData.get('Absender_Firma')} - ${formData.get('Ort')}`;
+    
+    // Body zusammenbauen
+    let body = "OMICRON PICK-UP SERVICE ORDER\n";
+    body += "==============================\n\n";
+    body += `Firma: ${formData.get('Absender_Firma')}\n`;
+    body += `Kontakt: ${formData.get('Kontaktperson')}\n`;
+    body += `Telefon: ${formData.get('Telefon')}\n`;
+    body += `E-Mail: ${formData.get('Absender_Email')}\n`;
+    body += `Adresse: ${formData.get('Strasse_Hnr')}, ${formData.get('PLZ')} ${formData.get('Ort')}\n\n`;
+    
+    body += "GERÄTE-DETAILS:\n";
+    body += `Produkte: ${formData.get('Geraete_Liste')}\n`;
+    body += `Seriennummern: ${formData.get('Seriennummern')}\n`;
+    body += `Grund: ${formData.get('Service_Grund')}\n\n`;
+    
+    body += "LOGISTIK:\n";
+    body += `Abholdatum: ${formData.get('Abholdatum')}\n`;
+    body += `Zeitfenster: ${formData.get('Zeitfenster') || 'Nicht angegeben'}\n`;
+    body += `Zusatzinfo: ${formData.get('Zusatzinfo_Logistik') || '-'}\n\n`;
+    
+    body += "PAKETE:\n";
+    const packCount = formData.get('Anzahl_Packstuecke');
+    for(let i = 1; i <= packCount; i++) {
+        body += `Package #${i}: ${formData.get('P'+i+'_Typ')} | ${formData.get('P'+i+'_L')}x${formData.get('P'+i+'_B')}x${formData.get('P'+i+'_H')} cm | ${formData.get('P'+i+'_Gewicht')} kg\n`;
+    }
+
+    // Mailto Link generieren und öffnen
+    const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+
+    // Optional: Erfolg anzeigen
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('success-overlay').style.display = 'flex';
+});
