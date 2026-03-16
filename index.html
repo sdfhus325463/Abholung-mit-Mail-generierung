@@ -45,7 +45,7 @@
 <div class="container">
     <div id="success-overlay">
         <div class="success-icon">✓</div>
-        <h1>Email draft created!</h1>
+        <h1>Email template created!</h1>
         <p>Your email program has been opened with a pre-filled draft. Please review and send it to finalize your pick-up order.</p>
         <button onclick="location.reload()" class="btn-reload">New Order</button>
     </div>
@@ -126,19 +126,26 @@
         dateInput.setAttribute('min', today);
     }
 
+    // Diese Funktion steuert die automatische Befüllung der Maße
     function updateDimensions(selectElement, index) {
         const card = selectElement.closest('.package-card');
         const lInput = card.querySelector(`input[name="P${index}_L"]`);
-        const bInput = card.querySelector(`input[name="P${index}_B"]`);
+        const wInput = card.querySelector(`input[name="P${index}_B"]`);
         const hInput = card.querySelector(`input[name="P${index}_H"]`);
 
-        switch(selectElement.value) {
-            case "Euro Palette (120x80)":
-                lInput.value = 120; bInput.value = 80; hInput.value = ""; break;
-            case "Kleine Palette (60x80)":
-                lInput.value = 80; bInput.value = 60; hInput.value = ""; break;
-            default:
-                lInput.value = ""; bInput.value = ""; hInput.value = "";
+        if (selectElement.value === "Euro Palette (120x80)") {
+            lInput.value = 120;
+            wInput.value = 80;
+            hInput.placeholder = "Höhe angeben";
+        } else if (selectElement.value === "Kleine Palette (60x80)") {
+            lInput.value = 80;
+            wInput.value = 60;
+            hInput.placeholder = "Höhe angeben";
+        } else {
+            lInput.value = "";
+            wInput.value = "";
+            hInput.value = "";
+            hInput.placeholder = "";
         }
     }
 
@@ -152,7 +159,7 @@
                 <div style="font-weight:bold; margin-bottom:10px; color:#0056b3;">Package #${i}</div>
                 <div style="margin-bottom:10px;">
                     <label>Type of Package *</label>
-                    <select name="P${i}_Typ" onchange="updateDimensions(this, ${i})" required>
+                    <select name="P${i}_Typ" class="package-type-select" data-index="${i}" required>
                         <option value="Paket">Parcel / Box</option>
                         <option value="Original Omicron Koffer">Original Omicron Case</option>
                         <option value="Euro Palette (120x80)">Euro Pallet (120x80)</option>
@@ -167,6 +174,11 @@
                 </div>
             `;
             container.appendChild(card);
+            
+            // Event Listener für das eben erstellte Select-Feld hinzufügen
+            card.querySelector('.package-type-select').addEventListener('change', function() {
+                updateDimensions(this, i);
+            });
         }
     }
     
@@ -183,7 +195,6 @@
         const recipient = "service@omicronenergy.com";
         const subject = `Pick-up Order: ${formData.get('Absender_Firma')} - ${formData.get('Ort')}`;
         
-        // E-Mail Text Aufbau (Formatierung basierend auf deinem Wunsch-Layout)
         let body = `1. ABSENDER & KONTAKT\r\n`;
         body += `Firma: ${formData.get('Absender_Firma')}\r\n`;
         body += `Kontaktperson: ${formData.get('Kontaktperson')}\r\n`;
@@ -208,18 +219,14 @@
         body += `Zeitfenster: ${formData.get('Zeitfenster') || 'Keine Angabe'}\r\n`;
         body += `Zusatzinfos: ${formData.get('Zusatzinfo_Logistik') || 'keine'}\r\n`;
 
-        // Mailto generieren
         const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         
-        // Mail-Programm öffnen
         window.location.href = mailtoUrl;
 
-        // Erfolgseite anzeigen
         mainContent.style.display = 'none';
         successOverlay.style.display = 'flex';
         window.scrollTo(0, 0);
     });
 </script>
 </body>
-</html>
 </html>
