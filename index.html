@@ -196,28 +196,28 @@
         const subject = `Pick-up Order: ${formData.get('Absender_Firma')} - ${formData.get('Ort')}`;
         
         let body = `1. ABSENDER & KONTAKT\r\n`;
-        body += `Firma: ${formData.get('Absender_Firma')}\r\n`;
-        body += `Kontaktperson: ${formData.get('Kontaktperson')}\r\n`;
-        body += `Telefon: ${formData.get('Telefon')}\r\n`;
-        body += `E-Mail: ${formData.get('Absender_Email')}\r\n`;
-        body += `Adresse: ${formData.get('Strasse_Hnr')}, ${formData.get('PLZ')}, ${formData.get('Ort')}\r\n\n`;
+        body += `Company: ${formData.get('Absender_Firma')}\r\n`;
+        body += `Contact person: ${formData.get('Kontaktperson')}\r\n`;
+        body += `Phone number: ${formData.get('Telefon')}\r\n`;
+        body += `Email address: ${formData.get('Absender_Email')}\r\n`;
+        body += `Address: ${formData.get('Strasse_Hnr')}, ${formData.get('PLZ')}, ${formData.get('Ort')}\r\n\n`;
         
         body += `2. GERÄTE-INFOS\r\n`;
-        body += `Modelle: ${formData.get('Geraete_Liste')}\r\n`;
-        body += `Seriennummern: ${formData.get('Seriennummern')}\r\n`;
-        body += `Servicegrund: ${formData.get('Service_Grund')}\r\n\n`;
+        body += `Models: ${formData.get('Geraete_Liste')}\r\n`;
+        body += `Serial numbers: ${formData.get('Seriennummern')}\r\n`;
+        body += `Reason for Service: ${formData.get('Service_Grund')}\r\n\n`;
         
         body += `3. PACKSTÜCKE\r\n`;
         const packCount = formData.get('Anzahl_Packstuecke');
         for(let i = 1; i <= packCount; i++) {
-            body += `Packstück #${i}: ${formData.get('P'+i+'_Typ')} | Maße: ${formData.get('P'+i+'_L')}x${formData.get('P'+i+'_B')}x${formData.get('P'+i+'_H')} cm | Gewicht: ${formData.get('P'+i+'_Gewicht')} kg\r\n`;
+            body += `Package #${i}: ${formData.get('P'+i+'_Typ')} | Dimensions: ${formData.get('P'+i+'_L')}x${formData.get('P'+i+'_B')}x${formData.get('P'+i+'_H')} cm | Weight: ${formData.get('P'+i+'_Gewicht')} kg\r\n`;
         }
         body += `\n`;
         
         body += `4. TERMINIERUNG\r\n`;
-        body += `Wunschdatum: ${formData.get('Abholdatum')}\r\n`;
-        body += `Zeitfenster: ${formData.get('Zeitfenster') || 'Keine Angabe'}\r\n`;
-        body += `Zusatzinfos: ${formData.get('Zusatzinfo_Logistik') || 'keine'}\r\n`;
+        body += `Requested Pick-up date: ${formData.get('Abholdatum')}\r\n`;
+        body += `Requested Time window: ${formData.get('Zeitfenster') || 'Keine Angabe'}\r\n`;
+        body += `Additional information: ${formData.get('Zusatzinfo_Logistik') || 'keine'}\r\n`;
 
         const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         
