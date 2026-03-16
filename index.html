@@ -100,7 +100,7 @@
                 <div class="section-title">4. Scheduling</div>
                 <div class="grid">
                     <div><label>Requested Date for pick-up *</label><input type="date" id="pickupDate" name="Abholdatum" required></div>
-                    <div><label>Time Window for pick-up</label><input type="text" name="Zeitfenster" placeholder="e.g. 08:00 - 15:00"></div>
+                    <div><label>Requested Time Window for pick-up</label><input type="text" name="Zeitfenster" placeholder="e.g. 08:00 - 15:00"></div>
                     <div class="full">
                         <label>Logistics Info (optional)</label>
                         <textarea name="Zusatzinfo_Logistik" rows="2" placeholder="e.g. Loading dock available"></textarea>
@@ -136,11 +136,11 @@
         if (selectElement.value === "Euro Palette (120x80)") {
             lInput.value = 120;
             wInput.value = 80;
-            hInput.placeholder = "Höhe angeben";
+            hInput.placeholder = "";
         } else if (selectElement.value === "Kleine Palette (60x80)") {
             lInput.value = 80;
             wInput.value = 60;
-            hInput.placeholder = "Höhe angeben";
+            hInput.placeholder = "";
         } else {
             lInput.value = "";
             wInput.value = "";
@@ -203,7 +203,7 @@
         body += `Address: ${formData.get('Strasse_Hnr')}, ${formData.get('PLZ')}, ${formData.get('Ort')}\r\n\n`;
         
         body += `2. DEVICE INFORMATION\r\n`;
-        body += `Models: ${formData.get('Geraete_Liste')}\r\n`;
+        body += `Devices: ${formData.get('Geraete_Liste')}\r\n`;
         body += `Serial numbers: ${formData.get('Seriennummern')}\r\n`;
         body += `Reason for Service: ${formData.get('Service_Grund')}\r\n\n`;
         
