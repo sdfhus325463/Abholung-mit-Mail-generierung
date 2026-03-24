@@ -9,6 +9,7 @@
         body { font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg); padding: 20px; color: #333; line-height: 1.5; }
         .container { max-width: 850px; margin: 0 auto; background: var(--card); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; position: relative; min-height: 400px; }
         .header { background: var(--primary); color: white; padding: 25px; text-align: center; }
+        .header img { height: 45px; margin-bottom: 10px; }
         .header h2 { margin: 0; font-size: 1.8em; letter-spacing: 1px; font-weight: 700; }
         .form-body { padding: 30px; }
         .section { margin-bottom: 35px; border-left: 4px solid var(--primary); padding-left: 20px; }
@@ -16,12 +17,12 @@
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .full { grid-column: span 2; }
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9em; color: #444; }
-        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em; box-sizing: border-box; font-family: inherit; transition: border 0.2s; }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], input[type="file"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em; box-sizing: border-box; font-family: inherit; transition: border 0.2s; }
+        input[type="file"] { padding: 9px; background: #fff; }
         
         .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e1e4e8; }
         .checkbox-group input[type="checkbox"] { width: auto; margin-top: 3px; transform: scale(1.2); }
         .checkbox-group label { margin-bottom: 0; font-weight: 400; font-size: 0.9em; }
-        .checkbox-group label strong { color: var(--primary); }
 
         .count-selector { background: #e7f3ff; padding: 25px; border-radius: 8px; margin-bottom: 25px; border: 2px solid var(--primary); }
         .count-input { font-size: 1.2em; font-weight: bold; color: var(--primary); border: 2px solid var(--primary); width: 100px !important; text-align: center; }
@@ -52,12 +53,13 @@
 
     <div id="main-content">
         <div class="header">
-            <h2>OMICRON Pick-up Service</h2>
+            <img src="https://www.omicronenergy.com/typo3conf/ext/omicron_theme/Resources/Public/Images/logo.svg" alt="OMICRON Logo">
+            <h2>Pick-up Service</h2>
         </div>
 
-        <form class="form-body" id="pickupForm">
+        <form class="form-body" id="pickupForm" enctype="multipart/form-data">
             
-            <input type="hidden" name="access_key" value="cd62b1ca-a513-41c6-9ae6-b33b3049ad14">
+            <input type="hidden" name="access_key" value="HIER_DEINEN_ACCESS_KEY_EINFÜGEN">
             
             <input type="hidden" name="from_name" value="OMICRON Pick-up Portal">
             <input type="checkbox" name="botcheck" style="display: none;">
@@ -109,6 +111,10 @@
                             <option value="Yes">Yes, under warranty</option>
                             <option value="No">No, out of warranty</option>
                         </select>
+                    </div>
+                    <div class="full" style="margin-top: 10px;">
+                        <label for="attachment">Attachment (optional - e.g. Error Log, Device Photo, Proforma Invoice)</label>
+                        <input type="file" id="attachment" name="Attachment" accept=".pdf, .jpg, .jpeg, .png">
                     </div>
                 </div>
             </div>
@@ -165,6 +171,16 @@
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
     }
+
+    // Wochenend-Sperre für die Datums-Auswahl
+    dateInput.addEventListener('input', function(e) {
+        const day = new Date(this.value).getUTCDay();
+        // 0 = Sonntag, 6 = Samstag
+        if([0, 6].includes(day)) {
+            this.value = '';
+            alert("Weekend pick-ups are generally not available. Please select a weekday (Mo-Fr).");
+        }
+    });
 
     function updateDimensions(selectElement, index) {
         const card = selectElement.closest('.package-card');
@@ -245,7 +261,7 @@
         setMinDate();
     });
 
-    // SENDEN-LOGIK MIT CUSTOM-TEXT-BLOCK (Ohne doppelte E-Mail)
+    // SENDEN-LOGIK MIT DATEI-UPLOAD
     pickupForm.addEventListener('submit', function(e) {
         e.preventDefault(); 
         
@@ -257,16 +273,22 @@
         const originalData = new FormData(pickupForm);
         const sendData = new FormData();
         
-        // 1. Wichtige Felder
+        // 1. Wichtige Felder & Datei-Anhang
         sendData.append('access_key', originalData.get('access_key'));
-        sendData.append('email', originalData.get('Email')); // Sorgt für den blauen Link ganz oben
+        sendData.append('email', originalData.get('Email')); // Sorgt für den blauen Link
+        
+        // Falls der User eine Datei hochgeladen hat, hängen wir sie an
+        const fileInput = document.getElementById('attachment');
+        if (fileInput.files.length > 0) {
+            sendData.append('Attachment', fileInput.files[0]);
+        }
         
         // 2. Dynamischer Betreff
         const companyName = document.getElementById('company').value;
         const cityName = document.getElementById('city').value;
         sendData.append('subject', 'Pick-up Order: ' + companyName + ' - ' + cityName);
 
-        // 3. TEXTBLOCK BAUEN (Hier wurde die "Email:" Zeile entfernt)
+        // 3. TEXTBLOCK BAUEN
         let messageBody = "=== 1. CONTACT & LOCATION ===\n";
         messageBody += "Company: " + originalData.get('Company') + "\n";
         messageBody += "Contact Person: " + originalData.get('Contact_Person') + "\n";
@@ -278,7 +300,9 @@
         messageBody += "Serial Numbers: " + originalData.get('Serial_Numbers') + "\n";
         messageBody += "RMA/Ticket Number: " + (originalData.get('RMA_Number') || "Not provided") + "\n";
         messageBody += "Reason for Service: " + originalData.get('Service_Reason') + "\n";
-        messageBody += "Warranty Case: " + originalData.get('Warranty_Status') + "\n\n";
+        messageBody += "Warranty Case: " + originalData.get('Warranty_Status') + "\n";
+        if (fileInput.files.length > 0) messageBody += "Attachment: Yes (see email attachments)\n";
+        messageBody += "\n";
 
         messageBody += "=== 3. PACKAGE DETAILS ===\n";
         const packCount = parseInt(originalData.get('Total_Packages')) || 1;
