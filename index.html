@@ -245,7 +245,7 @@
         setMinDate();
     });
 
-    // SENDEN-LOGIK MIT CUSTOM-TEXT-BLOCK
+    // SENDEN-LOGIK MIT CUSTOM-TEXT-BLOCK (Ohne doppelte E-Mail)
     pickupForm.addEventListener('submit', function(e) {
         e.preventDefault(); 
         
@@ -259,19 +259,18 @@
         
         // 1. Wichtige Felder
         sendData.append('access_key', originalData.get('access_key'));
-        sendData.append('email', originalData.get('Email'));
+        sendData.append('email', originalData.get('Email')); // Sorgt für den blauen Link ganz oben
         
         // 2. Dynamischer Betreff
         const companyName = document.getElementById('company').value;
         const cityName = document.getElementById('city').value;
         sendData.append('subject', 'Pick-up Order: ' + companyName + ' - ' + cityName);
 
-        // 3. TEXTBLOCK BAUEN (ohne Safety Declaration)
+        // 3. TEXTBLOCK BAUEN (Hier wurde die "Email:" Zeile entfernt)
         let messageBody = "=== 1. CONTACT & LOCATION ===\n";
         messageBody += "Company: " + originalData.get('Company') + "\n";
         messageBody += "Contact Person: " + originalData.get('Contact_Person') + "\n";
         messageBody += "Phone: " + originalData.get('Phone') + "\n";
-        messageBody += "Email: " + originalData.get('Email') + "\n";
         messageBody += "Address: " + originalData.get('Street') + ", " + originalData.get('Zip_Code') + " " + originalData.get('City') + " (" + originalData.get('Country') + ")\n\n";
 
         messageBody += "=== 2. DEVICE INFORMATION ===\n";
@@ -299,7 +298,7 @@
         messageBody += "Return Address same as Pick-up: " + (originalData.get('Same_Return_Address') ? "Yes" : "No") + "\n\n";
 
         // 4. Textfeld anhängen
-        sendData.append('Order_Details', messageBody);
+        sendData.append('Order Details', messageBody);
 
         fetch('https://api.web3forms.com/submit', {
             method: 'POST',
