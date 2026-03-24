@@ -59,7 +59,6 @@
             
             <input type="hidden" name="access_key" value="cd62b1ca-a513-41c6-9ae6-b33b3049ad14">
             
-            <input type="hidden" name="subject" value="New Pick-up Order - OMICRON Service">
             <input type="hidden" name="from_name" value="OMICRON Pick-up Portal">
             <input type="checkbox" name="botcheck" style="display: none;">
 
@@ -111,11 +110,6 @@
                             <option value="No">No, out of warranty</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="decontamination" name="Safety_Declaration_Confirmed" value="Yes" required>
-                    <label for="decontamination"><strong>Safety Declaration:</strong> I confirm that the returned devices are free of hazardous substances and contaminants. *</label>
                 </div>
             </div>
 
@@ -251,7 +245,7 @@
         setMinDate();
     });
 
-    // Senden an Web3Forms
+    // SENDEN-LOGIK MIT CUSTOM-TEXT-BLOCK
     pickupForm.addEventListener('submit', function(e) {
         e.preventDefault(); 
         
@@ -260,13 +254,56 @@
         submitBtn.innerText = "Sending Order...";
         submitBtn.disabled = true;
 
-        const formData = new FormData(pickupForm);
-
-        formData.set('subject', 'Pick-up Order: ' + document.getElementById('company').value + ' - ' + document.getElementById('city').value);
+        const originalData = new FormData(pickupForm);
+        const sendData = new FormData();
         
+        // 1. Wichtige Felder
+        sendData.append('access_key', originalData.get('access_key'));
+        sendData.append('email', originalData.get('Email'));
+        
+        // 2. Dynamischer Betreff
+        const companyName = document.getElementById('company').value;
+        const cityName = document.getElementById('city').value;
+        sendData.append('subject', 'Pick-up Order: ' + companyName + ' - ' + cityName);
+
+        // 3. TEXTBLOCK BAUEN (ohne Safety Declaration)
+        let messageBody = "=== 1. CONTACT & LOCATION ===\n";
+        messageBody += "Company: " + originalData.get('Company') + "\n";
+        messageBody += "Contact Person: " + originalData.get('Contact_Person') + "\n";
+        messageBody += "Phone: " + originalData.get('Phone') + "\n";
+        messageBody += "Email: " + originalData.get('Email') + "\n";
+        messageBody += "Address: " + originalData.get('Street') + ", " + originalData.get('Zip_Code') + " " + originalData.get('City') + " (" + originalData.get('Country') + ")\n\n";
+
+        messageBody += "=== 2. DEVICE INFORMATION ===\n";
+        messageBody += "Devices: " + originalData.get('Devices') + "\n";
+        messageBody += "Serial Numbers: " + originalData.get('Serial_Numbers') + "\n";
+        messageBody += "RMA/Ticket Number: " + (originalData.get('RMA_Number') || "Not provided") + "\n";
+        messageBody += "Reason for Service: " + originalData.get('Service_Reason') + "\n";
+        messageBody += "Warranty Case: " + originalData.get('Warranty_Status') + "\n\n";
+
+        messageBody += "=== 3. PACKAGE DETAILS ===\n";
+        const packCount = parseInt(originalData.get('Total_Packages')) || 1;
+        for(let i = 1; i <= packCount; i++) {
+            messageBody += "Package #" + i + ": " + originalData.get('Package_'+i+'_Type') + 
+                           " | Dimensions: " + originalData.get('Package_'+i+'_Length') + "x" + 
+                           originalData.get('Package_'+i+'_Width') + "x" + 
+                           originalData.get('Package_'+i+'_Height') + " cm | " + 
+                           "Weight: " + originalData.get('Package_'+i+'_Weight') + " kg\n";
+        }
+        messageBody += "\n";
+
+        messageBody += "=== 4. SCHEDULING & LOGISTICS ===\n";
+        messageBody += "Requested Pick-up Date: " + originalData.get('Pickup_Date') + "\n";
+        messageBody += "Time Window: " + (originalData.get('Time_Window') || "Not specified") + "\n";
+        messageBody += "Logistics Info: " + (originalData.get('Logistics_Info') || "None") + "\n";
+        messageBody += "Return Address same as Pick-up: " + (originalData.get('Same_Return_Address') ? "Yes" : "No") + "\n\n";
+
+        // 4. Textfeld anhängen
+        sendData.append('Order_Details', messageBody);
+
         fetch('https://api.web3forms.com/submit', {
             method: 'POST',
-            body: formData
+            body: sendData
         })
         .then(async (response) => {
             let json = await response.json();
@@ -275,7 +312,7 @@
                 successOverlay.style.display = 'flex';
                 window.scrollTo(0, 0);
                 pickupForm.reset(); 
-                renderPackages(); // Pakete zurücksetzen
+                renderPackages(); 
             } else {
                 console.log(response);
                 alert("Something went wrong: " + json.message);
