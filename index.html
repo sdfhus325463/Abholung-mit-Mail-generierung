@@ -261,6 +261,8 @@
         submitBtn.disabled = true;
 
         const formData = new FormData(pickupForm);
+
+        formData.set('subject', 'Pick-up Order: ' + document.getElementById('company').value + ' - ' + document.getElementById('city').value);
         
         fetch('https://api.web3forms.com/submit', {
             method: 'POST',
