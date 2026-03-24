@@ -16,24 +16,24 @@
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .full { grid-column: span 2; }
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9em; color: #444; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em; box-sizing: border-box; font-family: inherit; transition: border 0.2s; }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em; box-sizing: border-box; font-family: inherit; transition: border 0.2s; }
         
+        .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e1e4e8; }
+        .checkbox-group input[type="checkbox"] { width: auto; margin-top: 3px; transform: scale(1.2); }
+        .checkbox-group label { margin-bottom: 0; font-weight: 400; font-size: 0.9em; }
+        .checkbox-group label strong { color: var(--primary); }
+
         .count-selector { background: #e7f3ff; padding: 25px; border-radius: 8px; margin-bottom: 25px; border: 2px solid var(--primary); }
         .count-input { font-size: 1.2em; font-weight: bold; color: var(--primary); border: 2px solid var(--primary); width: 100px !important; text-align: center; }
         .package-card { background: #f8f9fa; border: 1px solid #e1e4e8; padding: 20px; border-radius: 8px; margin-bottom: 15px; }
         .dimensions { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+        .weight-warning { color: var(--warn-text); font-size: 0.85em; margin-top: 5px; font-weight: 600; min-height: 18px; }
         
         button#submitBtn { background: var(--primary); color: white; border: none; padding: 20px; font-size: 1.1em; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 700; margin-top: 20px; transition: 0.3s; }
         button#submitBtn:hover { background: #003d82; }
+        button#submitBtn:disabled { background: #6c757d; cursor: not-allowed; }
 
-        #success-overlay { 
-            display: none; 
-            padding: 60px 30px; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-        }
+        #success-overlay { display: none; padding: 60px 30px; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .success-icon { font-size: 60px; color: var(--success); margin-bottom: 20px; }
         #success-overlay h1 { color: var(--primary); margin-bottom: 15px; margin-top: 0; }
         #success-overlay p { line-height: 1.6; color: #555; max-width: 500px; margin: 0 auto; }
@@ -45,9 +45,9 @@
 <div class="container">
     <div id="success-overlay">
         <div class="success-icon">✓</div>
-        <h1>Email template created!</h1>
-        <p>Your email program has been opened with a pre-filled draft. Please review and send it to finalize your pick-up order.</p>
-        <button onclick="location.reload()" class="btn-reload">New Order</button>
+        <h1>Pick-up order submitted!</h1>
+        <p>Your data has been successfully transmitted to the OMICRON Service Team. We will process your request shortly.</p>
+        <button onclick="location.reload()" class="btn-reload">Create New Order</button>
     </div>
 
     <div id="main-content">
@@ -56,39 +56,72 @@
         </div>
 
         <form class="form-body" id="pickupForm">
+            
+            <input type="hidden" name="access_key" value="cd62b1ca-a513-41c6-9ae6-b33b3049ad14">
+            
+            <input type="hidden" name="subject" value="New Pick-up Order - OMICRON Service">
+            <input type="hidden" name="from_name" value="OMICRON Pick-up Portal">
+            <input type="checkbox" name="botcheck" style="display: none;">
+
             <div class="section">
-                <div class="section-title">1. Contact</div>
+                <div class="section-title">1. Contact & Location</div>
                 <div class="grid">
-                    <div class="full"><label>Company *</label><input type="text" name="Absender_Firma" required></div>
-                    <div><label>Contact Person *</label><input type="text" name="Kontaktperson" required></div>
-                    <div><label>Phone number *</label><input type="tel" name="Telefon" required></div>
-                    <div class="full"><label>Email *</label><input type="email" name="Absender_Email" required></div>
-                    <div><label>City *</label><input type="text" name="Ort" required></div>
-                    <div><label>Zip Code *</label><input type="text" name="PLZ" required></div>
-                    <div class="full"><label>Street, House No. *</label><input type="text" name="Strasse_Hnr" required></div>
+                    <div class="full"><label for="company">Company *</label><input type="text" id="company" name="Company" required></div>
+                    <div><label for="contactPerson">Contact Person *</label><input type="text" id="contactPerson" name="Contact_Person" required></div>
+                    <div><label for="phone">Phone number *</label><input type="tel" id="phone" name="Phone" required></div>
+                    <div class="full"><label for="email">Email *</label><input type="email" id="email" name="Email" required></div>
+                    
+                    <div class="full"><label for="street">Street, House No. *</label><input type="text" id="street" name="Street" required></div>
+                    <div><label for="zipCode">Zip Code *</label><input type="text" id="zipCode" name="Zip_Code" required></div>
+                    <div><label for="city">City *</label><input type="text" id="city" name="City" required></div>
+                    <div class="full"><label for="country">Country *</label><input type="text" id="country" name="Country" required></div>
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">2. Device Info</div>
-                <div style="margin-bottom: 20px;">
-                    <label>Products & Accessories *</label>
-                    <textarea name="Geraete_Liste" rows="3" placeholder="e.g. CMC 500 - Testing Cable" required></textarea>
+                <div class="section-title">2. Device Information</div>
+                <div class="grid">
+                    <div class="full">
+                        <label for="deviceList">Products & Accessories *</label>
+                        <textarea id="deviceList" name="Devices" rows="3" placeholder="e.g. CMC 500 - Testing Cable" required></textarea>
+                    </div>
+                    <div>
+                        <label for="serialNumbers">Serial Number(s) *</label>
+                        <input type="text" id="serialNumbers" name="Serial_Numbers" placeholder="e.g. EB12345" required>
+                    </div>
+                    <div>
+                        <label for="rmaNumber">RMA / Ticket Number (if known)</label>
+                        <input type="text" id="rmaNumber" name="RMA_Number" placeholder="e.g. CAS-12345-X9Y8">
+                    </div>
+                    <div>
+                        <label for="serviceReason">Reason for Service *</label>
+                        <select id="serviceReason" name="Service_Reason" required>
+                            <option value="">Please select...</option>
+                            <option value="Repair">Repair</option>
+                            <option value="Calibration">Calibration</option>
+                            <option value="Upgrade">Upgrade</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="warrantyStatus">Warranty Case?</label>
+                        <select id="warrantyStatus" name="Warranty_Status" required>
+                            <option value="Unknown">I don't know</option>
+                            <option value="Yes">Yes, under warranty</option>
+                            <option value="No">No, out of warranty</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div style="margin-bottom: 20px;">
-                    <label>Serial Number(s) *</label>
-                    <input type="text" name="Seriennummern" placeholder="e.g. 12345678" required>
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label>Reason for Service *</label>
-                    <input type="text" name="Service_Grund" placeholder="e.g. Repair, Calibration, Upgrade" required>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="decontamination" name="Safety_Declaration_Confirmed" value="Yes" required>
+                    <label for="decontamination"><strong>Safety Declaration:</strong> I confirm that the returned devices are free of hazardous substances and contaminants. *</label>
                 </div>
             </div>
 
             <div class="count-selector">
-                <label>How many packages in total?</label>
-                <input type="number" id="packageCount" name="Anzahl_Packstuecke" value="1" min="1" max="15" class="count-input">
+                <label for="packageCount">How many packages in total?</label>
+                <input type="number" id="packageCount" name="Total_Packages" value="1" min="1" max="15" class="count-input">
             </div>
 
             <div class="section">
@@ -97,18 +130,31 @@
             </div>
 
             <div class="section">
-                <div class="section-title">4. Scheduling</div>
+                <div class="section-title">4. Scheduling & Logistics</div>
                 <div class="grid">
-                    <div><label>Requested Date for pick-up *</label><input type="date" id="pickupDate" name="Abholdatum" required></div>
-                    <div><label>Requested Time Window for pick-up</label><input type="text" name="Zeitfenster" placeholder="e.g. 08:00 - 15:00"></div>
+                    <div><label for="pickupDate">Requested Pick-up Date *</label><input type="date" id="pickupDate" name="Pickup_Date" required></div>
+                    <div><label for="timeWindow">Requested Time Window</label><input type="text" id="timeWindow" name="Time_Window" placeholder="e.g. 08:00 - 15:00"></div>
                     <div class="full">
-                        <label>Logistics Info (optional)</label>
-                        <textarea name="Zusatzinfo_Logistik" rows="2" placeholder="e.g. Loading dock available"></textarea>
+                        <label for="logisticsInfo">Logistics Info (optional)</label>
+                        <textarea id="logisticsInfo" name="Logistics_Info" rows="2" placeholder="e.g. Loading dock available, ring at gate 3"></textarea>
                     </div>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="sameReturnAddress" name="Same_Return_Address" value="Yes" checked>
+                    <label for="sameReturnAddress">Return address is the same as the pick-up address.</label>
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn">Generate Email Template</button>
+            <div class="section">
+                <div class="section-title">5. Legal</div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="gdprConsent" name="GDPR_Consent" value="Yes" required>
+                    <label for="gdprConsent">I consent to the processing of my data for the purpose of handling this service request in accordance with the OMICRON Privacy Policy. *</label>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn">Submit Pick-up Order</button>
         </form>
     </div>
 </div>
@@ -126,26 +172,44 @@
         dateInput.setAttribute('min', today);
     }
 
-    // Diese Funktion steuert die automatische Befüllung der Maße
     function updateDimensions(selectElement, index) {
         const card = selectElement.closest('.package-card');
-        const lInput = card.querySelector(`input[name="P${index}_L"]`);
-        const wInput = card.querySelector(`input[name="P${index}_B"]`);
-        const hInput = card.querySelector(`input[name="P${index}_H"]`);
+        const lInput = card.querySelector(`input[name="Package_${index}_Length"]`);
+        const wInput = card.querySelector(`input[name="Package_${index}_Width"]`);
+        const hInput = card.querySelector(`input[name="Package_${index}_Height"]`);
+        const type = selectElement.value;
 
-        if (selectElement.value === "Euro Palette (120x80)") {
-            lInput.value = 120;
-            wInput.value = 80;
-            hInput.placeholder = "";
-        } else if (selectElement.value === "Kleine Palette (60x80)") {
-            lInput.value = 80;
-            wInput.value = 60;
-            hInput.placeholder = "";
+        if (!selectElement.dataset.prevType || selectElement.dataset.prevType === "Parcel" || selectElement.dataset.prevType === "OmicronCase") {
+            selectElement.dataset.savedL = lInput.value || "";
+            selectElement.dataset.savedW = wInput.value || "";
+            selectElement.dataset.savedH = hInput.value || "";
+        }
+
+        if (type === "EuroPallet") {
+            lInput.value = 120; wInput.value = 80; hInput.placeholder = "";
+        } else if (type === "SmallPallet") {
+            lInput.value = 80; wInput.value = 60; hInput.placeholder = "";
         } else {
-            lInput.value = "";
-            wInput.value = "";
-            hInput.value = "";
-            hInput.placeholder = "";
+            lInput.value = selectElement.dataset.savedL || "";
+            wInput.value = selectElement.dataset.savedW || "";
+            hInput.value = selectElement.dataset.savedH || "";
+        }
+        
+        selectElement.dataset.prevType = type;
+        
+        const weightInput = card.querySelector(`input[name="Package_${index}_Weight"]`);
+        if(weightInput) checkWeight(weightInput);
+    }
+
+    function checkWeight(inputElement) {
+        const card = inputElement.closest('.package-card');
+        const typeSelect = card.querySelector('.package-type-select');
+        let warningDiv = card.querySelector('.weight-warning');
+        
+        if (typeSelect.value === "Parcel" && parseFloat(inputElement.value) > 31.5) {
+            warningDiv.textContent = "Warning: Parcels over 31.5 kg might require pallet shipping.";
+        } else {
+            warningDiv.textContent = "";
         }
     }
 
@@ -156,29 +220,28 @@
             const card = document.createElement('div');
             card.className = 'package-card';
             card.innerHTML = `
-                <div style="font-weight:bold; margin-bottom:10px; color:#0056b3;">Package #${i}</div>
+                <div style="font-weight:bold; margin-bottom:10px; color:var(--primary);">Package #${i}</div>
                 <div style="margin-bottom:10px;">
-                    <label>Type of Package *</label>
-                    <select name="P${i}_Typ" class="package-type-select" data-index="${i}" required>
-                        <option value="Paket">Parcel / Box</option>
-                        <option value="Original Omicron Koffer">Original Omicron Case</option>
-                        <option value="Euro Palette (120x80)">Euro Pallet (120x80)</option>
-                        <option value="Kleine Palette (60x80)">Small Pallet (60x80)</option>
+                    <label for="P${i}_Type">Type of Package *</label>
+                    <select id="P${i}_Type" name="Package_${i}_Type" class="package-type-select" data-index="${i}" required>
+                        <option value="Parcel">Parcel / Box</option>
+                        <option value="OmicronCase">Original Omicron Case</option>
+                        <option value="EuroPallet">Euro Pallet (120x80)</option>
+                        <option value="SmallPallet">Small Pallet (60x80)</option>
                     </select>
                 </div>
                 <div class="dimensions">
-                    <div><label>L (cm)</label><input type="number" name="P${i}_L" required min="1"></div>
-                    <div><label>W (cm)</label><input type="number" name="P${i}_B" required min="1"></div>
-                    <div><label>H (cm)</label><input type="number" name="P${i}_H" required min="1"></div>
-                    <div><label>KG</label><input type="number" name="P${i}_Gewicht" step="0.1" required min="0.1"></div>
+                    <div><label for="P${i}_L">L (cm)</label><input type="number" id="P${i}_L" name="Package_${i}_Length" required min="1"></div>
+                    <div><label for="P${i}_B">W (cm)</label><input type="number" id="P${i}_B" name="Package_${i}_Width" required min="1"></div>
+                    <div><label for="P${i}_H">H (cm)</label><input type="number" id="P${i}_H" name="Package_${i}_Height" required min="1"></div>
+                    <div><label for="P${i}_Weight">KG</label><input type="number" id="P${i}_Weight" name="Package_${i}_Weight" step="0.1" required min="0.1" class="weight-input"></div>
                 </div>
+                <div class="weight-warning"></div>
             `;
             container.appendChild(card);
             
-            // Event Listener für das eben erstellte Select-Feld hinzufügen
-            card.querySelector('.package-type-select').addEventListener('change', function() {
-                updateDimensions(this, i);
-            });
+            card.querySelector('.package-type-select').addEventListener('change', function() { updateDimensions(this, i); });
+            card.querySelector('.weight-input').addEventListener('input', function() { checkWeight(this); });
         }
     }
     
@@ -188,44 +251,42 @@
         setMinDate();
     });
 
+    // Senden an Web3Forms
     pickupForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+        e.preventDefault(); 
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const originalBtnText = submitBtn.innerText;
+        submitBtn.innerText = "Sending Order...";
+        submitBtn.disabled = true;
+
         const formData = new FormData(pickupForm);
         
-        const recipient = "service@omicronenergy.com";
-        const subject = `Pick-up Order: ${formData.get('Absender_Firma')} - ${formData.get('Ort')}`;
-        
-        let body = `1. CONTACT\r\n`;
-        body += `Company: ${formData.get('Absender_Firma')}\r\n`;
-        body += `Contact person: ${formData.get('Kontaktperson')}\r\n`;
-        body += `Phone number: ${formData.get('Telefon')}\r\n`;
-        body += `Email address: ${formData.get('Absender_Email')}\r\n`;
-        body += `Address: ${formData.get('Strasse_Hnr')}, ${formData.get('PLZ')}, ${formData.get('Ort')}\r\n\n`;
-        
-        body += `2. DEVICE INFORMATION\r\n`;
-        body += `Devices: ${formData.get('Geraete_Liste')}\r\n`;
-        body += `Serial numbers: ${formData.get('Seriennummern')}\r\n`;
-        body += `Reason for Service: ${formData.get('Service_Grund')}\r\n\n`;
-        
-        body += `3. PACKAGES\r\n`;
-        const packCount = formData.get('Anzahl_Packstuecke');
-        for(let i = 1; i <= packCount; i++) {
-            body += `Package #${i}: ${formData.get('P'+i+'_Typ')} | Dimensions: ${formData.get('P'+i+'_L')}x${formData.get('P'+i+'_B')}x${formData.get('P'+i+'_H')} cm | Weight: ${formData.get('P'+i+'_Gewicht')} kg\r\n`;
-        }
-        body += `\n`;
-        
-        body += `4. SCHEDULING\r\n`;
-        body += `Requested Pick-up date: ${formData.get('Abholdatum')}\r\n`;
-        body += `Requested Time window: ${formData.get('Zeitfenster') || 'Keine Angabe'}\r\n`;
-        body += `Additional information: ${formData.get('Zusatzinfo_Logistik') || 'keine'}\r\n`;
-
-        const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        
-        window.location.href = mailtoUrl;
-
-        mainContent.style.display = 'none';
-        successOverlay.style.display = 'flex';
-        window.scrollTo(0, 0);
+        fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: formData
+        })
+        .then(async (response) => {
+            let json = await response.json();
+            if (response.status == 200) {
+                mainContent.style.display = 'none';
+                successOverlay.style.display = 'flex';
+                window.scrollTo(0, 0);
+                pickupForm.reset(); 
+                renderPackages(); // Pakete zurücksetzen
+            } else {
+                console.log(response);
+                alert("Something went wrong: " + json.message);
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            alert("Network error. Please check your connection.");
+        })
+        .then(function() {
+            submitBtn.innerText = originalBtnText;
+            submitBtn.disabled = false;
+        });
     });
 </script>
 </body>
